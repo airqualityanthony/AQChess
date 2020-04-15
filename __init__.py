@@ -1,11 +1,81 @@
 from flask import Flask, redirect, url_for, render_template, request
-from AQChessLadder import win_list
-from chess_game_read import games_return
 import chess
 import chess.pgn
 import io
+import requests
 
 app = Flask(__name__)
+
+def get(url):
+    return requests.get(url).json()
+
+def versus_check(user,month = "03",year = "2020"):
+    users = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
+    if user in users: 
+        users.remove(user)
+    game = get(f'https://api.chess.com/pub/player/{user}/games/{year}/{month}')
+
+    games_list = []
+    for games in game['games']:
+        games_list.append(games)    
+    
+    results = []    
+    for x in users:
+        for i in games_list:
+            if user in i['white']['username'] and x in i['black']['username']:
+                results.append({'White':i['white']['username'],"W_Result":i['white']['result'],"Black":i['black']['username'],"B_Result":i['black']['result']})
+            if x in i['white']['username'] and user in i['black']['username']:
+                results.append({'White':i['white']['username'],"W_Result":i['white']['result'],"Black":i['black']['username'],"B_Result":i['black']['result']})
+    return(results)
+
+def win_check(user,games):
+    wins = 0
+    for i in games: 
+        if i is not None:  
+            if i['White'] == user and i['W_Result'] == "win":
+                wins += 1
+            elif i['Black'] == user and i['B_Result'] == "win":
+                wins += 1
+        else:
+            pass
+    return(wins)
+
+def games_return(user,month = "03",year = "2020"):
+    users = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
+    if user in users: 
+        users.remove(user)
+    game = get(f'https://api.chess.com/pub/player/{user}/games/{year}/{month}')
+
+    games_list = []
+    for games in game['games']:
+        games_list.append(games)    
+    
+    results = []    
+    for x in users:
+        for i in games_list:
+            if user in i['white']['username'] and x in i['black']['username']:
+                results.append(i['pgn'])
+            if x in i['white']['username'] and user in i['black']['username']:
+                results.append(i['pgn'])
+    return(results)
+
+def win_list(users):
+    games = []
+
+    for y in users:
+        games.append(versus_check(y))
+
+    wins = []
+    for x in users:
+        score = []
+        for i in games:
+            score.append(win_check(x,i))
+        wins.append(score)
+    final_scores = []
+    for i in wins:
+        x = max(i)
+        final_scores.append(x)
+    return(final_scores)
 
 names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
 user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
