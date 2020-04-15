@@ -9,5 +9,5 @@ Flask-Migrate==2.1.1
 Flask-Moment==0.5.2
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
-requests==2.18.4
+requests==2.20.0
 Jinja2==2.10
