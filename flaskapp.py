@@ -110,6 +110,7 @@ def games_list(pgn_list):
 
 g = games_list(pgn_list)
 
+
 @app.route("/")
 def home():
 	return render_template("index.html", details = details, games = g)
