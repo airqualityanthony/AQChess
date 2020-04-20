@@ -3,6 +3,7 @@ import chess
 import chess.pgn
 import io
 import requests
+from operator import add
 
 app = Flask(__name__)
 
@@ -59,11 +60,11 @@ def games_return(user,month = "03",year = "2020"):
                 results.append(i['pgn'])
     return(results)
 
-def win_list(users):
+def win_list(users,month = "03",year="2020"):
     games = []
 
     for y in users:
-        games.append(versus_check(y))
+        games.append(versus_check(y,month,year))
 
     wins = []
     for x in users:
@@ -76,22 +77,6 @@ def win_list(users):
         x = max(i)
         final_scores.append(x)
     return(final_scores)
-
-names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
-user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
-## run win_list function to retrieve number of wins for each player.
-wins = win_list(user_list)
-
-
-pgn_list = games_return(user_list[0])
-details = list(zip(names,user_list,wins))
-
-## get PGN string for chess.js to read.
-pgn = io.StringIO(pgn_list[0])
-game = chess.pgn.read_game(pgn)
-moves = str(game.mainline())
-white = game.headers['White']
-black = game.headers['Black']
 
 def games_list(pgn_list):
 	games = []
@@ -108,16 +93,62 @@ def games_list(pgn_list):
 		games.append(detail)
 	return(games)
 
+
+names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
+user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
+## run win_list function to retrieve number of wins for each player.
+wins_march = win_list(user_list, month="03",year="2020")
+wins_april = win_list(user_list, month="04",year="2020")
+wins = list(map(add,wins_march,wins_april))
+pgn_list = games_return(user_list[0], month= "03",year="2020")
+details = list(zip(names,user_list,wins))
+
+# get PGN string for chess.js to read.
+moves = []
+for i in pgn_list:
+    games = []
+    pgn = io.StringIO(i)
+    game = chess.pgn.read_game(pgn)
+    move = str(game.mainline())
+    games.append(move)
+    white_p = game.headers['White']
+    black_p = game.headers['Black']
+    date = game.headers['EndDate']
+    time = game.headers['EndTime']
+    dt = str(date + time)
+    games.append(white_p)
+    games.append(black_p)
+    games.append(dt)
+    moves.append(games)
+
+print(moves)
+
 g = games_list(pgn_list)
+games_march = games_list(pgn_list)
+details_march = list(zip(names,user_list,wins))
+
+pgn_list_april = games_return(user_list[0], month= "04",year="2020")
+details_april = list(zip(names,user_list,wins))
+games_april = games_list(pgn_list_april)
 
 
 @app.route("/")
 def home():
 	return render_template("index.html", details = details, games = g)
+@app.route("/march")
+def march():
+	return render_template("march.html", details = details_march, games = games_march)
+@app.route("/april")
+def april():
+    return render_template("april.html", details = details_april, games = games_april)
+# @app.route("/may")
+# def may():
+# 	return render_template("may.html", details = details, games = games)
+
 
 @app.route("/games")
 def games():
-	return render_template("games.html", pgn = moves, white = white, black = black)
+	return render_template("games.html", pgn = moves)
 
 if __name__ == "__main__":
 	app.run(debug = True)

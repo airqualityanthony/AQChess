@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block index_content %}
+{% block april_content %}
 <div class="container p-3 my-3 pt-3 border">
     <div class="row">
         <div class="col">
@@ -37,6 +37,7 @@
                                 
                                     <div class="dropdown inline round-switcher">
                                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                            April
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
@@ -48,7 +49,6 @@
                                                 <li>
                                                     <a href="/april">April</a>
                                                 </li>
-
                                             
                                         </ul>
                                     </div>
@@ -98,6 +98,8 @@
                                                     </td>
                                                     <td class="text-right cell-time"><time datetime="2020.04.14" data-original-title="" title="">{{i[3]}} {{i[4]}}</time></td>
                                                 </tr>
+                                            {% else %}
+                                                <p>  No Games Yet! </p>
                                             {% endfor %}
                                     </tbody></table>
                                     
