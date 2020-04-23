@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block games_content %}
 
-
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-        <p>{{details[1]}} versus {{details[2]}} - {{details[3]}}</p>
+        <p>{{details[0]}} versus {{details[1]}} - {{details[2]}}</p>
         <div id= 'myBoard' style="width: 400px"></div>
         <input type="button" id="startPositionBtn5" value="|<" />
         <input type="button" id="prevBtn5" value="<" />
@@ -22,7 +21,7 @@
             var game = new Chess();
             
             // 1. Load a PGN into the game
-            var pgn = {{moves|tojson}};
+            var pgn = {{details[0]|tojson}};
             game.load_pgn(pgn);
             $('#pgn5').html(pgn);
             // 2. Get the full move history

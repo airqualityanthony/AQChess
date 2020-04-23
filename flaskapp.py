@@ -97,33 +97,50 @@ def games_list(pgn_list):
 names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
 user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
 ## run win_list function to retrieve number of wins for each player.
-wins_march = win_list(user_list, month="03",year="2020")
-wins_april = win_list(user_list, month="04",year="2020")
-wins = list(map(add,wins_march,wins_april))
+wins = win_list(user_list, month="04",year="2020")
 pgn_list = games_return(user_list[0], month= "03",year="2020")
 details = list(zip(names,user_list,wins))
 
 # get PGN string for chess.js to read.
 moves = []
+game_details = []
 for i in pgn_list:
     games = []
     pgn = io.StringIO(i)
     game = chess.pgn.read_game(pgn)
     move = str(game.mainline())
+    moves.append(move)
     games.append(move)
     white_p = game.headers['White']
     black_p = game.headers['Black']
     date = game.headers['EndDate']
     time = game.headers['EndTime']
-    dt = str(date + time)
+    dt = str(date + " " + time)
     games.append(white_p)
     games.append(black_p)
     games.append(dt)
-    moves.append(games)
+    game_details.append(games)
 
-print(moves)
+names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
+user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
+## front page game results
+## march games ElectricFalcon - Need to do everyone, plus and remove duplicates
+Anthony_games = games_list(games_return(user_list[0], month= "04",year="2020"))
+Josh_games = games_list(games_return(user_list[1], month= "04",year="2020"))
+Pauls_games = games_list(games_return(user_list[2], month= "04",year="2020"))
+Naval_games = games_list(games_return(user_list[3], month= "04",year="2020"))
+Lee_games = games_list(games_return(user_list[4], month= "04",year="2020"))
+Alex_games = games_list(games_return(user_list[5], month= "04",year="2020"))
+James_games = games_list(games_return(user_list[6], month= "04",year="2020"))
+Girsh_games = games_list(games_return(user_list[7], month= "04",year="2020"))
 
-g = games_list(pgn_list)
+g = Anthony_games+Josh_games+Pauls_games+Naval_games+Lee_games+Alex_games+James_games+Girsh_games
+
+import itertools
+g.sort()
+new_num = list(num for num,_ in itertools.groupby(g))
+
+
 games_march = games_list(pgn_list)
 details_march = list(zip(names,user_list,wins))
 
@@ -134,21 +151,21 @@ games_april = games_list(pgn_list_april)
 
 @app.route("/")
 def home():
-	return render_template("index.html", details = details, games = g)
+	return render_template("index.html", details = details, games = new_num)
 @app.route("/march")
 def march():
 	return render_template("march.html", details = details_march, games = games_march)
 @app.route("/april")
 def april():
     return render_template("april.html", details = details_april, games = games_april)
-# @app.route("/may")
-# def may():
-# 	return render_template("may.html", details = details, games = games)
 
+@app.route('/<username>')
+def username_games(username):
+    return render_template("usernamegames.html", details = username)
 
 @app.route("/games")
 def games():
-	return render_template("games.html", pgn = moves)
+	return render_template("games.html", moves = moves[0], details = game_details[0])
 
 if __name__ == "__main__":
 	app.run(debug = True)
