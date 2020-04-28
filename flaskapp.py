@@ -100,7 +100,7 @@ user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mra
 wins = win_list(user_list, month="04",year="2020")
 pgn_list = games_return(user_list[0], month= "03",year="2020")
 details = list(zip(names,user_list,wins))
-
+ordered_details = sorted(details,key=lambda x:x[2], reverse = True)
 # get PGN string for chess.js to read.
 moves = []
 game_details = []
@@ -135,7 +135,7 @@ James_games = games_list(games_return(user_list[6], month= "04",year="2020"))
 Girsh_games = games_list(games_return(user_list[7], month= "04",year="2020"))
 
 g = Anthony_games+Josh_games+Pauls_games+Naval_games+Lee_games+Alex_games+James_games+Girsh_games
-
+## remove duplicates
 import itertools
 g.sort()
 new_num = list(num for num,_ in itertools.groupby(g))
@@ -146,18 +146,18 @@ details_march = list(zip(names,user_list,wins))
 
 pgn_list_april = games_return(user_list[0], month= "04",year="2020")
 details_april = list(zip(names,user_list,wins))
+ordered_details_april = sorted(details_april,key=lambda x:x[2], reverse = True)
 games_april = games_list(pgn_list_april)
+
+
 
 
 @app.route("/")
 def home():
-	return render_template("index.html", details = details, games = new_num)
-@app.route("/march")
-def march():
-	return render_template("march.html", details = details_march, games = games_march)
+	return render_template("index.html", details = ordered_details, games = new_num)
 @app.route("/april")
 def april():
-    return render_template("april.html", details = details_april, games = games_april)
+    return render_template("april.html", details = ordered_details_april, games = new_num)
 
 @app.route('/<username>')
 def username_games(username):
