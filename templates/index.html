@@ -112,4 +112,77 @@
         </div>
     </div>
 </div>
+
+<div class="container p-3 my-3 pt-3 border">
+    <div class="row">
+        <div class="col">
+                <div class="well-head">
+                    <h3>Latest Game</h3>
+                </div>
+        <p>{{latest_game[1]}} versus {{latest_game[2]}} - {{latest_game[3]}}</p>
+        <div id= 'myBoard' style="width: 400px"></div>
+        <input type="button" class="btn .btn-primary .btn-lg" id="startPositionBtn5" value="|<" />
+        <input type="button" class="btn .btn-primary .btn-lg" id="prevBtn5" value="<" />
+        <input type="button" class="btn .btn-primary .btn-lg" id="nextBtn5" value=">" />
+        <input type="button" class="btn .btn-primary .btn-lg" id="endPositionBtn5" value=">|" />
+        <script>
+            $(function() {
+            var cfg = {
+                pieceTheme: 'https://koblenski.github.io/javascript/chessboardjs-0.3.0/img/chesspieces/wikipedia/{piece}.png',
+                position: 'start'
+            };
+            var board = ChessBoard('myBoard', cfg);
+            var game = new Chess();
+            
+            // 1. Load a PGN into the game
+            var pgn = {{latest_moves|tojson}};
+            game.load_pgn(pgn);
+            $('#pgn5').html(pgn);
+            // 2. Get the full move history
+            var history = game.history();
+            game.reset();
+            var i = 0;
+            // 3. If Next button clicked, move forward one
+            $('#nextBtn5').on('click', function() {
+                game.move(history[i]);
+                board.position(game.fen());
+                i += 1;
+                if (i > history.length) {
+                    i = history.length;
+                }
+            });  
+            // 4. If Prev button clicked, move backward one
+            $('#prevBtn5').on('click', function() {
+                game.undo();
+                board.position(game.fen());
+                i -= 1;
+                if (i < 0) {
+                i = 0;
+                }
+            });
+            // 5. If Start button clicked, go to start position
+            $('#startPositionBtn5').on('click', function() {
+                game.reset();
+                board.start();
+                i = 0;
+            });
+            // 6. If End button clicked, go to end position
+            $('#endPositionBtn5').on('click', function() {
+                game.load_pgn(pgn);
+                board.position(game.fen());
+                i = history.length;
+            });
+            });
+        </script>
+        </div>
+        <div class="col-md">
+            <div class="container p-3 my-3 pt-3 border">
+                <h6>PGN Moves</h6>
+                <p class = "small"><span id="pgn5"></span></p>    
+            </div>    
+        </div>
+    </div>
+    
+</div>
+
 {% endblock %}
