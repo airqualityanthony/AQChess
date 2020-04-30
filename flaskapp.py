@@ -37,6 +37,15 @@ def win_check(user,games):
                 wins += 1
             elif i['Black'] == user and i['B_Result'] == "win":
                 wins += 1
+            elif i['White'] == user and i['W_Result'] == "draw":
+                wins += 0.5
+            elif i['Black'] == user and i['B_Result'] == "draw":
+                wins += 0.5
+            elif i['White'] == user and i['W_Result'] == "insufficient":
+                wins += 0.5
+            elif i['Black'] == user and i['B_Result'] == "insufficient":
+                wins += 0.5
+            
         else:
             pass
     return(wins)
@@ -184,16 +193,14 @@ games_april = games_list(pgn_list_april)
 latest_game = games_total[-1]
 latest_game_moves = games_total[-1][0]
 
+print(ordered_details)
+
 @app.route("/")
 def home():
 	return render_template("index.html", details = ordered_details, games = new_num, latest_game = latest_game, latest_moves = latest_game_moves)
 @app.route("/april")
 def april():
     return render_template("april.html", details = ordered_details_april, games = new_num)
-
-@app.route('/band')
-def band():
-    return render_template("band.html")
 
 @app.route("/games")
 def games():
