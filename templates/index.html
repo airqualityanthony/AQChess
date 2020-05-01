@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block index_content %}
+<style>
+    .my-custom-scrollbar {
+    position: relative;
+    height: 400px;
+    overflow: auto;
+    }
+    .table-wrapper-scroll-y {
+    display: block;
+    }
+</style>
 <div class="container p-3 my-3 pt-3 border">
     <div class="row">
         <div class="col">
@@ -36,9 +46,8 @@
                             <div class="well-body">
 
                                     </div>
-                                    <div class="table-responsive">
-                                        <div class="bodycontainer scrollable">
-                                    <table class="table table-condensed-xs" id="table-team-pairings">
+                                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                        <table class="table table-condensed-xs" id="table-team-pairings">
                                         
                                             <tbody>
                                                 <tr class="header-row">
@@ -87,6 +96,7 @@
                                     </tbody>
                                 </table>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                             <script>
@@ -140,7 +150,12 @@
                 if (i > history.length) {
                     i = history.length;
                 }
-            });  
+            }); 
+            window.onload = function() {
+       //when the document is finished loading, replace everything
+       //between the <a ...> </a> tags with the value of splitText
+                document.getElementById("pgnHistory").innerHTML=history;
+            }  
             // 4. If Prev button clicked, move backward one
             $('#prevBtn5').on('click', function() {
                 game.undo();
@@ -167,12 +182,51 @@
         </div>
         <div class="col-md">
             <div class="container p-3 my-3 pt-3 border text-left">
-                <h6>PGN Moves</h6>
-                <p class = "small"><span id="pgn5"></span></p>    
+                <div class="well-head">
+                    <h3>Moves</h3>
+                </div>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-condensed-xs" id="table-team-pairings">
+                
+                        <tbody>
+                            <tr class="header-row">
+                                <th class = "cell-score cell-move">
+                                    <a>
+                                    No.
+                                    </a>
+                                </th>
+                                <th class="cell-score cell-white">
+                                    White
+                                </th>
+                                <th class="cell-score cell-black">
+                                    <a>
+                                    Black
+                                    </a>
+                                </th>
+                        </tr>
+                        {% for i in pgn %}
+                            <tr>
+                                <td class="text-left move-number">
+                                        <span class="color-dot left hidden-xs"></span>
+                                        <a>
+                                        {{i[2]}}.
+                                        </a>
+                                </td>
+                                    <td class="text-left cell-white-move">
+                                     <a>{{i[0]}}</a>
+                                        
+                                    </td>
+                                
+                                <td class="text-left cell-black-move">
+                                        <a>
+                                         {{i[1]}}
+                                        </a>
+                                </td>
+                            </tr>
+                        {% endfor %}   
             </div>    
         </div>
     </div>
-    
 </div>
 
 {% endblock %}

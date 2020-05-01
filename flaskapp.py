@@ -5,6 +5,7 @@ import io
 import requests
 from operator import add
 import itertools
+import re
 
 app = Flask(__name__)
 
@@ -129,7 +130,6 @@ def games_list_total(month,year):
     return(new_num)
 
 new_num = games_list_total("04","2020") + games_list_total("05","2020")
-## remove duplicates
 ordered_new_num = sorted(new_num,key=lambda x:x[3])
 
 def move_list_total(month,year):
@@ -168,11 +168,22 @@ for i in moves_clean:
 latest_game = games_total[-1]
 latest_game_moves = games_total[-1][0]
 
+pgn = io.StringIO(latest_game_moves)
+game = chess.pgn.read_game(pgn)
+san_moves = []
+board = chess.Board()
 
+for move in game.mainline_moves():
+    san_moves.append(board.san(move))
+    board.push(move)
+
+moves_table = [san_moves[x:x+2] for x in range(0, len(san_moves), 2)]
+for i in moves_table:
+    i.append(moves_table.index(i)+1)
 
 @app.route("/")
 def home():
-	return render_template("index.html", details = ordered_details, games = ordered_new_num, latest_game = latest_game, latest_moves = latest_game_moves)
+	return render_template("index.html", details = ordered_details, games = ordered_new_num, latest_game = latest_game, latest_moves = latest_game_moves, pgn = moves_table)
 
 if __name__ == "__main__":
 	app.run(debug = True)
