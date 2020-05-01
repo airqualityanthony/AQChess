@@ -4,6 +4,7 @@ import chess.pgn
 import io
 import requests
 from operator import add
+import itertools
 
 app = Flask(__name__)
 
@@ -106,63 +107,46 @@ def games_list(pgn_list):
 names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
 user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
 ## run win_list function to retrieve number of wins for each player.
-wins = win_list(user_list, month="04",year="2020")
-pgn_list = games_return(user_list[0], month= "04",year="2020")
+wins_april = win_list(user_list, month="04",year="2020")
+wins_may = win_list(user_list, month="05",year="2020")
+wins = wins_april + wins_may 
 details = list(zip(names,user_list,wins))
 ordered_details = sorted(details,key=lambda x:x[2], reverse = True)
-# get PGN string for chess.js to read.
-moves = []
-game_details = []
-for i in pgn_list:
-    games = []
-    pgn = io.StringIO(i)
-    game = chess.pgn.read_game(pgn)
-    move = str(game.mainline())
-    moves.append(move)
-    games.append(move)
-    white_p = game.headers['White']
-    black_p = game.headers['Black']
-    date = game.headers['EndDate']
-    time = game.headers['EndTime']
-    dt = str(date + " " + time)
-    games.append(white_p)
-    games.append(black_p)
-    games.append(dt)
-    game_details.append(games)
 
-names = ["Anthony","Josh","Pauls","Naval","Lee","Alex","James","Girish"]
-user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mralexbarr","Relph29","HardAmmo"]
 ## front page game results
-## march games ElectricFalcon - Need to do everyone, plus and remove duplicates
-Anthony_games = games_list(games_return(user_list[0], month= "04",year="2020"))
-Josh_games = games_list(games_return(user_list[1], month= "04",year="2020"))
-Pauls_games = games_list(games_return(user_list[2], month= "04",year="2020"))
-Naval_games = games_list(games_return(user_list[3], month= "04",year="2020"))
-Lee_games = games_list(games_return(user_list[4], month= "04",year="2020"))
-Alex_games = games_list(games_return(user_list[5], month= "04",year="2020"))
-James_games = games_list(games_return(user_list[6], month= "04",year="2020"))
-Girish_games = games_list(games_return(user_list[7], month= "04",year="2020"))
+def games_list_total(month,year):
+    Anthony_games = games_list(games_return(user_list[0], month,year))
+    Josh_games = games_list(games_return(user_list[1], month,year))
+    Pauls_games = games_list(games_return(user_list[2], month,year))
+    Naval_games = games_list(games_return(user_list[3], month,year))
+    Lee_games = games_list(games_return(user_list[4], month,year))
+    Alex_games = games_list(games_return(user_list[5], month,year))
+    James_games = games_list(games_return(user_list[6], month,year))
+    Girish_games = games_list(games_return(user_list[7], month,year))
+    g = Anthony_games+Josh_games+Pauls_games+Naval_games+Lee_games+Alex_games+James_games+Girish_games
+    g.sort()
+    new_num = list(num for num,_ in itertools.groupby(g))
+    return(new_num)
 
-g = Anthony_games+Josh_games+Pauls_games+Naval_games+Lee_games+Alex_games+James_games+Girish_games
+new_num = games_list_total("04","2020") + games_list_total("05","2020")
 ## remove duplicates
-import itertools
-g.sort()
-new_num = list(num for num,_ in itertools.groupby(g))
+ordered_new_num = sorted(new_num,key=lambda x:x[3])
 
-Anthony_moves = games_return(user_list[0], month= "04",year="2020")
-Josh_moves = games_return(user_list[1], month= "04",year="2020")
-Pauls_moves = games_return(user_list[2], month= "04",year="2020")
-Naval_moves = games_return(user_list[3], month= "04",year="2020")
-Lee_moves = games_return(user_list[4], month= "04",year="2020")
-Alex_moves = games_return(user_list[5], month= "04",year="2020")
-James_moves = games_return(user_list[6], month= "04",year="2020")
-Girish_moves = games_return(user_list[7], month= "04",year="2020")
+def move_list_total(month,year):
+    Anthony_moves = games_return(user_list[0], month,year)
+    Josh_moves = games_return(user_list[1], month,year)
+    Pauls_moves = games_return(user_list[2], month,year)
+    Naval_moves = games_return(user_list[3], month,year)
+    Lee_moves = games_return(user_list[4], month,year)
+    Alex_moves = games_return(user_list[5], month,year)
+    James_moves = games_return(user_list[6], month,year)
+    Girish_moves = games_return(user_list[7], month,year)
+    g_moves = Anthony_moves+Josh_moves+Pauls_moves+Naval_moves+Lee_moves+Alex_moves+James_moves+Girish_moves
+    g_moves.sort()
+    moves_clean = list(num for num,_ in itertools.groupby(g_moves))
+    return(moves_clean)
 
-g_moves = Anthony_moves+Josh_moves+Pauls_moves+Naval_moves+Lee_moves+Alex_moves+James_moves+Girish_moves
-## remove duplicates
-import itertools
-g_moves.sort()
-moves_clean = list(num for num,_ in itertools.groupby(g_moves))
+moves_clean = move_list_total("04","2020") + move_list_total("05","2020")
 
 games_total = []
 for i in moves_clean:
@@ -181,30 +165,14 @@ for i in moves_clean:
     games.append(dt)
     games_total.append(games)
 
-
-games_march = games_list(pgn_list)
-details_march = list(zip(names,user_list,wins))
-
-pgn_list_april = games_return(user_list[0], month= "04",year="2020")
-details_april = list(zip(names,user_list,wins))
-ordered_details_april = sorted(details_april,key=lambda x:x[2], reverse = True)
-games_april = games_list(pgn_list_april)
-
 latest_game = games_total[-1]
 latest_game_moves = games_total[-1][0]
 
-print(ordered_details)
+
 
 @app.route("/")
 def home():
-	return render_template("index.html", details = ordered_details, games = new_num, latest_game = latest_game, latest_moves = latest_game_moves)
-@app.route("/april")
-def april():
-    return render_template("april.html", details = ordered_details_april, games = new_num)
-
-@app.route("/games")
-def games():
-	return render_template("games.html", moves = moves[0], details = game_details[0])
+	return render_template("index.html", details = ordered_details, games = ordered_new_num, latest_game = latest_game, latest_moves = latest_game_moves)
 
 if __name__ == "__main__":
 	app.run(debug = True)

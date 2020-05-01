@@ -34,22 +34,10 @@
                                 <h3>Games Played</h3>
                             </div>
                             <div class="well-body">
-                                
-                                    <div class="dropdown inline round-switcher">
-                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                                            <span class="caret">April</span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                                <li role="separator" class="divider"></li>
 
-                                                <li>
-                                                    <a href="/april">April</a>
-                                                </li>
-
-                                            
-                                        </ul>
                                     </div>
-                                
+                                    <div class="table-responsive">
+                                        <div class="bodycontainer scrollable">
                                     <table class="table table-condensed-xs" id="table-team-pairings">
                                         
                                             <tbody>
@@ -96,8 +84,10 @@
                                                     <td class="text-right cell-time"><time datetime="2020.04.14" data-original-title="" title="">{{i[3]}} {{i[4]}}</time></td>
                                                 </tr>
                                             {% endfor %}
-                                    </tbody></table>
-                                    
+                                    </tbody>
+                                </table>
+                                        </div>
+                                </div>
                             </div>
                             <script>
                                 $(document).ready(function(){
