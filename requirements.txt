@@ -2,3 +2,4 @@ python-chess
 Flask
 gunicorn
 Jinja2
+requests
