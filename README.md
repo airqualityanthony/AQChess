@@ -1,2 +1,0 @@
-# AQChess
- Air Quality Chess
