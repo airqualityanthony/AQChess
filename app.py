@@ -110,7 +110,8 @@ user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mra
 ## run win_list function to retrieve number of wins for each player.
 wins_april = win_list(user_list, month="04",year="2020")
 wins_may = win_list(user_list, month="05",year="2020")
-wins = wins_april + wins_may 
+wins = list(map(add,wins_april,wins_may))
+print(wins)
 details = list(zip(names,user_list,wins))
 ordered_details = sorted(details,key=lambda x:x[2], reverse = True)
 
