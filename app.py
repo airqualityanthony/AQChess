@@ -131,7 +131,7 @@ def games_list_total(month,year):
     return(new_num)
 
 new_num = games_list_total("04","2020") + games_list_total("05","2020")
-ordered_new_num = reversed(sorted(new_num,key=lambda x:x[3]))
+ordered_new_num = sorted(new_num,key=lambda x:x[3], reverse = True)
 
 def move_list_total(month,year):
     Anthony_moves = games_return(user_list[0], month,year)
