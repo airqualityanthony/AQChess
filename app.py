@@ -111,9 +111,21 @@ user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mra
 wins_april = win_list(user_list, month="04",year="2020")
 wins_may = win_list(user_list, month="05",year="2020")
 wins = list(map(add,wins_april,wins_may))
-print(wins)
-details = list(zip(names,user_list,wins))
+## number of games
+def number_of_games(user_list,month,year):
+    g = []
+    for i in user_list:
+        g.append(len(games_list(games_return(i,month,year))))
+    return(g)
+
+april_num = number_of_games(user_list,"04","2020")
+may_num = number_of_games(user_list,"05","2020")
+num_games = list(map(add,april_num,may_num))
+# print(len(games_list(games_return(user_list[0], "05","2020"))) + len(games_list(games_return(user_list[0], "04","2020"))))
+details = list(zip(names,user_list,wins,num_games))
 ordered_details = sorted(details,key=lambda x:x[2], reverse = True)
+
+
 
 ## front page game results
 def games_list_total(month,year):
