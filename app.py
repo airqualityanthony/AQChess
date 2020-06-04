@@ -110,7 +110,9 @@ user_list = ["ElectricFalcon", "JPeg71","paulsilzins","ChessWho1","ldavie2","mra
 ## run win_list function to retrieve number of wins for each player.
 wins_april = win_list(user_list, month="04",year="2020")
 wins_may = win_list(user_list, month="05",year="2020")
-wins = list(map(add,wins_april,wins_may))
+wins_june = win_list(user_list, month="06",year="2020")
+wins_interim = map(add,wins_april,wins_may)
+wins = list(map(add,wins_interim,wins_june))
 ## number of games
 def number_of_games(user_list,month,year):
     g = []
@@ -120,7 +122,10 @@ def number_of_games(user_list,month,year):
 
 april_num = number_of_games(user_list,"04","2020")
 may_num = number_of_games(user_list,"05","2020")
-num_games = list(map(add,april_num,may_num))
+jun_num = number_of_games(user_list,"06","2020")
+num_games_interim = map(add,april_num,may_num)
+num_games = list(map(add,num_games_interim,jun_num))
+
 # print(len(games_list(games_return(user_list[0], "05","2020"))) + len(games_list(games_return(user_list[0], "04","2020"))))
 details = list(zip(names,user_list,wins,num_games))
 ordered_details = sorted(details,key=lambda x:x[2], reverse = True)
@@ -142,7 +147,7 @@ def games_list_total(month,year):
     new_num = list(num for num,_ in itertools.groupby(g))
     return(new_num)
 
-new_num = games_list_total("04","2020") + games_list_total("05","2020")
+new_num = games_list_total("04","2020") + games_list_total("05","2020") + games_list_total("06","2020")
 ordered_new_num = sorted(new_num,key=lambda x:x[3], reverse = True)
 
 def move_list_total(month,year):
@@ -159,7 +164,7 @@ def move_list_total(month,year):
     moves_clean = list(num for num,_ in itertools.groupby(g_moves))
     return(moves_clean)
 
-moves_clean = move_list_total("04","2020") + move_list_total("05","2020")
+moves_clean = move_list_total("04","2020") + move_list_total("05","2020") + move_list_total("06","2020")
 
 games_total = []
 for i in moves_clean:
